@@ -1,12 +1,11 @@
 {
   "name": "Lark Now Playing",
-  "description": "Manually set a custom 'Listening to Lark Player' status",
+  "description": "Shows the current playing music in status.",
+  "version": "1.0.0",
   "authors": [
     {
-      "name": "nani",
-      "id": "0"
+      "name": "hokalaza"
     }
   ],
-  "version": "1.0.0",
   "main": "index.js"
 }
