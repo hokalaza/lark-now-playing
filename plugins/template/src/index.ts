@@ -1,38 +1,45 @@
-import { storage } from "@vendetta/plugin";
+import { settings } from "@vendetta";
+import { registerSettings } from "@vendetta/settings";
+import { patcher } from "@vendetta/patcher";
 import { findByProps } from "@vendetta/metro";
-import { plugin } from "@vendetta";
 
-const Status = findByProps("setCustomStatus");
+let patches = [];
 
-export const onLoad = () => {
-  if (!storage.song) storage.song = "No Song";
+export default {
+    onLoad() {
+        const statusModule = findByProps("setPresence");
 
-  Status.setCustomStatus({
-    text: `🎵 Listening on Lark: ${storage.song}`
-  });
+        patches.push(
+            patcher.before(statusModule, "setPresence", (args) => {
+                const playing = settings.get("text", "Listening to music");
+                args[0].status = "online";
+                args[0].activities = [
+                    {
+                        name: playing,
+                        type: 2
+                    }
+                ];
+            })
+        );
+
+        registerSettings(
+            "Lark Now Playing",
+            () => {
+                return (
+                    <div>
+                        <input
+                            placeholder="Now playing text"
+                            value={settings.get("text", "")}
+                            onChange={(v) => settings.set("text", v)}
+                        />
+                    </div>
+                );
+            }
+        );
+    },
+
+    onUnload() {
+        for (const unpatch of patches) unpatch();
+        patches = [];
+    }
 };
-
-export const onUnload = () => {
-  Status.setCustomStatus(null);
-};
-
-export const settings = () => ({
-  title: "Lark Now Playing",
-  render: () => {
-    return (
-      <div style={{ padding: 10 }}>
-        <h3>Lark Now Playing</h3>
-        <input
-          placeholder="Enter song name"
-          value={storage.song}
-          onChange={(v) => {
-            storage.song = v;
-            Status.setCustomStatus({
-              text: `🎵 Listening on Lark: ${storage.song}`
-            });
-          }}
-        />
-      </div>
-    );
-  }
-});
