@@ -2,8 +2,6 @@
   "name": "Lark Now Playing",
   "description": "Shows the current playing music in status.",
   "version": "1.0.0",
-  "authors": [
-    { "name": "hokalaza" }
-  ],
+  "authors": [{ "name": "hokalaza" }],
   "main": "index.js"
 }
